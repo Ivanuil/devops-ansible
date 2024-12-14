@@ -1,0 +1,27 @@
+- name: Java-setup
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Install Java
+      community.general.apk:
+        name:
+          - java-cacerts
+          - openjdk21-jdk
+        state: present
+        update_cache: false
+
+    - name: Install OpenJDK
+      apt:
+        name: openjdk-11-jdk
+        state: present
+      when: ansible_os_family == 'Debian'
+    
+    - name: download apache maven
+      get_url: url=https://dlcdn.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz dest=/tmp/apache-maven-3.9.9-bin.tar.gz
+
+    - name: untar maven
+      shell: chdir=/tmp creates=/opt/apache-maven-3.9.9 tar -zxf apache-maven-3.9.9-bin.tar.gz -C /opt
+
+    - name: add maven to PATH
+      shell: cat /etc/profile | grep "/opt/apache-maven-3.9.9/bin" || echo "PATH=/opt/apache-maven-3.9.9/bin:$PATH" >> /etc/profile

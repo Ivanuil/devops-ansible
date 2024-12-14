@@ -1,0 +1,15 @@
+- name: Run Java Applications
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Clone repo
+      git: 
+        repo: https://github.com/Ivanuil/FriendAlertBot
+        dest: /app
+
+    - name: Put credentials
+      shell: rm -rf ../app/src/main/resources/application-auth.properties ../app/src/main/resources/application.properties; cp application.properties ../app/src/main/resources/application.properties
+
+    - name: mvn run
+      shell: cd ../app; nohup mvn spring-boot:run &
